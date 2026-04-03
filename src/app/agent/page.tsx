@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
@@ -320,7 +320,7 @@ function PersonalityEditor({
   );
 }
 
-export default function AgentPage() {
+function AgentPageContent() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isReconfigureOpen, setIsReconfigureOpen] = useState(false);
@@ -389,6 +389,11 @@ export default function AgentPage() {
   const messages = activeSession?.messages ?? [];
   const hasMessages = messages.length > 0;
   const activePersonality = activeSession?.personality ?? DEFAULT_PERSONALITY;
+
+  function handleSubmit() {
+    void sendMessage(query);
+  }
+
   const handleComposerKeyDown = createComposerKeyDownHandler(handleSubmit);
 
   useEffect(() => {
@@ -897,10 +902,6 @@ export default function AgentPage() {
     void sendMessage(prompt, []);
   }
 
-  function handleSubmit() {
-    void sendMessage(query);
-  }
-
   function handleQuickAction(prompt: string) {
     void sendMessage(prompt, []);
   }
@@ -1278,5 +1279,28 @@ export default function AgentPage() {
         </div>
       </section>
     </div>
+  );
+}
+
+function AgentPageFallback() {
+  return (
+    <div className="page-grid relative h-screen overflow-hidden">
+      <OrbitalBackground />
+      <section className="relative mx-auto h-full max-w-[1440px] px-4 pt-6 md:px-8 md:pt-8">
+        <div className="flex h-full items-center justify-center">
+          <div className="glass-panel rounded-[28px] px-6 py-5 text-sm text-white/68">
+            Loading agent…
+          </div>
+        </div>
+      </section>
+    </div>
+  );
+}
+
+export default function AgentPage() {
+  return (
+    <Suspense fallback={<AgentPageFallback />}>
+      <AgentPageContent />
+    </Suspense>
   );
 }
