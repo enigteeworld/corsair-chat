@@ -42,6 +42,7 @@ import type {
 
 const SYMBOL_OPTIONS = ["😏", "⚡", "🧠", "✦"];
 const ARBITRUM_SEPOLIA_CHAIN_ID = 421614;
+const ARBITRUM_SEPOLIA_CHAIN_NAME = "Arbitrum Sepolia";
 
 type ParsedWalletSend = {
   amount: string;
@@ -70,7 +71,9 @@ function formatWalletBalance(formatted?: string, symbol?: string) {
   return symbol ? `${trimmed} ${symbol}` : trimmed;
 }
 
-function parsePendingUserWalletSendContent(content: string): ParsedWalletSend | null {
+function parsePendingUserWalletSendContent(
+  content: string
+): ParsedWalletSend | null {
   const amountMatch = content.match(/- Amount:\s*([0-9]*\.?[0-9]+)/i);
   const destinationMatch = content.match(/- Destination:\s*(0x[a-fA-F0-9]{40})/i);
 
@@ -328,6 +331,7 @@ function AgentPageContent() {
     useState<PendingWalletExecution | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const homepageIntentHandledRef = useRef(false);
 
   const router = useRouter();
@@ -349,10 +353,7 @@ function AgentPageContent() {
 
   const { sendTransactionAsync } = useSendTransaction();
 
-  const {
-    switchChainAsync,
-    isPending: isSwitchingChain,
-  } = useSwitchChain();
+  const { switchChainAsync, isPending: isSwitchingChain } = useSwitchChain();
 
   const { data: walletReceipt, error: walletReceiptError } =
     useWaitForTransactionReceipt({
@@ -397,8 +398,15 @@ function AgentPageContent() {
   const handleComposerKeyDown = createComposerKeyDownHandler(handleSubmit);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-  }, [messages.length, isLoading, activeSessionId]);
+    const id = window.requestAnimationFrame(() => {
+      messagesEndRef.current?.scrollIntoView({
+        behavior: hasMessages ? "smooth" : "auto",
+        block: "end",
+      });
+    });
+
+    return () => window.cancelAnimationFrame(id);
+  }, [messages.length, isLoading, activeSessionId, hasMessages]);
 
   useEffect(() => {
     if (!activeSession) return;
@@ -769,7 +777,7 @@ function AgentPageContent() {
           "",
           buildConnectedWalletLine(address, chain?.name ?? null, chain?.id),
           "",
-          "Your connected wallet is not on Arbitrum Sepolia.",
+          `Your connected wallet is not on ${ARBITRUM_SEPOLIA_CHAIN_NAME}.`,
           "",
           "Use the **Switch to Arbitrum Sepolia** button below, then confirm the wallet send again.",
         ].join("\n")
@@ -851,7 +859,7 @@ function AgentPageContent() {
           "",
           buildConnectedWalletLine(
             address,
-            "Arbitrum Sepolia",
+            ARBITRUM_SEPOLIA_CHAIN_NAME,
             ARBITRUM_SEPOLIA_CHAIN_ID
           ),
           "",
@@ -944,7 +952,7 @@ function AgentPageContent() {
   }
 
   return (
-    <div className="page-grid relative h-screen overflow-hidden">
+    <div className="page-grid relative h-[100dvh] overflow-hidden">
       <OrbitalBackground />
 
       <input
@@ -1029,10 +1037,10 @@ function AgentPageContent() {
         </div>
       )}
 
-      <section className="relative mx-auto h-full max-w-[1440px] px-4 pt-6 md:px-8 md:pt-8">
-        <div className="grid h-full gap-8 xl:grid-cols-[274px_minmax(0,1fr)] xl:gap-10">
+      <section className="relative mx-auto h-full min-h-0 max-w-[1440px] px-4 pt-4 pb-[max(12px,env(safe-area-inset-bottom))] md:px-8 md:pt-6">
+        <div className="grid h-full min-h-0 gap-6 xl:grid-cols-[274px_minmax(0,1fr)] xl:gap-10">
           <aside className="hidden xl:block">
-            <div className="sticky top-[88px] h-[calc(100vh-112px)]">
+            <div className="sticky top-[88px] h-[calc(100dvh-112px)]">
               <div className="glass-panel flex h-full w-[274px] flex-col rounded-[22px]">
                 <div className="px-5 pb-4 pt-5">
                   <div className="text-[1.75rem] font-semibold leading-none tracking-[-0.04em] text-white/92">
@@ -1078,7 +1086,7 @@ function AgentPageContent() {
               </button>
 
               {!hasMessages ? (
-                <div className="pt-8 text-center md:pt-14">
+                <div className="overflow-y-auto px-0 pt-8 pb-4 text-center md:pt-14">
                   <h1 className="mx-auto max-w-[720px] text-balance text-[clamp(2rem,4.5vw,3.95rem)] font-semibold leading-[0.98] tracking-[-0.05em] text-white/92">
                     Discover and create
                     <br className="hidden sm:block" /> with{" "}
@@ -1186,8 +1194,8 @@ function AgentPageContent() {
                   )}
                 </div>
               ) : (
-                <div className="glass-panel mt-6 flex h-full min-h-0 flex-col rounded-[30px] p-3 md:mt-8 md:rounded-[34px] md:p-4">
-                  <div className="mb-2 px-1 md:px-2">
+                <div className="glass-panel mt-3 flex h-full min-h-0 flex-col overflow-hidden rounded-[26px] p-2.5 md:mt-6 md:rounded-[34px] md:p-4">
+                  <div className="mb-2 px-1 pt-1 md:px-2">
                     <div className="mx-auto flex max-w-[740px] items-center justify-between gap-3">
                       <div className="text-[0.86rem] text-white/42 md:text-[0.9rem]">
                         Active profile:{" "}
@@ -1198,8 +1206,11 @@ function AgentPageContent() {
 
                       <div className="hidden items-center gap-2 md:flex">
                         <div className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-[0.78rem] text-white/56">
-                          Wallet: {formatWalletBalance(
-                            balanceData ? formatUnits(balanceData.value, balanceData.decimals) : undefined,
+                          Wallet:{" "}
+                          {formatWalletBalance(
+                            balanceData
+                              ? formatUnits(balanceData.value, balanceData.decimals)
+                              : undefined,
                             balanceData?.symbol
                           )}
                         </div>
@@ -1225,7 +1236,10 @@ function AgentPageContent() {
                     </div>
                   </div>
 
-                  <div className="min-h-0 flex-1 overflow-y-auto px-1 pb-4 pt-1 md:px-2">
+                  <div
+                    ref={scrollContainerRef}
+                    className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-1 pb-4 pt-1 md:px-2"
+                  >
                     <div className="mx-auto max-w-[760px] space-y-5 md:max-w-[740px]">
                       {messages.map((message) =>
                         message.role === "user" ? (
@@ -1244,11 +1258,11 @@ function AgentPageContent() {
                         )
                       )}
 
-                      <div ref={messagesEndRef} />
+                      <div ref={messagesEndRef} className="h-1 w-full" />
                     </div>
                   </div>
 
-                  <div className="pt-2">
+                  <div className="border-t border-white/8 bg-black/10 px-1 pt-2 pb-[max(4px,env(safe-area-inset-bottom))] backdrop-blur-sm md:px-2">
                     <div className="mx-auto max-w-[760px] md:max-w-[740px]">
                       <Composer
                         query={query}
@@ -1284,7 +1298,7 @@ function AgentPageContent() {
 
 function AgentPageFallback() {
   return (
-    <div className="page-grid relative h-screen overflow-hidden">
+    <div className="page-grid relative h-[100dvh] overflow-hidden">
       <OrbitalBackground />
       <section className="relative mx-auto h-full max-w-[1440px] px-4 pt-6 md:px-8 md:pt-8">
         <div className="flex h-full items-center justify-center">
