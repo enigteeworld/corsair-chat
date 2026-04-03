@@ -338,7 +338,7 @@ function parseUserWalletSendIntent(input: string): ParsedSendIntent | null {
   }
 
   const amount = match[1];
-  const to = match[3] as `0x${string}`;
+  const to = match[2] as `0x${string}`;
 
   if (!Number.isFinite(Number(amount)) || Number(amount) <= 0) {
     return null;
@@ -442,7 +442,7 @@ function buildTreasurySendConfirmationReply(
     formatConnectedWalletLine(wallet),
     "- Action type: treasury-managed backend execution",
     "",
-    "This uses the Corsair treasury wallet exposed by the backend, not the connected user wallet.",
+    "This path uses the Corsair treasury wallet exposed by the backend. It does not use the connected user wallet.",
     "",
     "Reply with `confirm send` to execute it.",
     "Reply with `cancel` to stop it.",
@@ -485,7 +485,7 @@ function buildConnectedWalletReadoutReply(wallet?: WalletContext) {
       "",
       "- Status: not connected",
       "- Address: —",
-      `- Chain: —`,
+      "- Chain: —",
       "",
       "Connect a wallet from the header first, then try again.",
     ].join("\n");
@@ -510,7 +510,7 @@ function buildSwitchWalletNetworkReply(wallet?: WalletContext) {
     "",
     formatConnectedWalletLine(wallet),
     "",
-    `Corsair user-wallet actions should run on ${ARBITRUM_SEPOLIA_CHAIN_NAME} (${ARBITRUM_SEPOLIA_CHAIN_ID}).`,
+    `User-wallet actions should run on ${ARBITRUM_SEPOLIA_CHAIN_NAME} (${ARBITRUM_SEPOLIA_CHAIN_ID}).`,
     "",
     "Use the **Switch to Arbitrum Sepolia** button below.",
   ].join("\n");
@@ -578,7 +578,7 @@ async function handleShowStrategies(wallet?: WalletContext): Promise<string> {
     "### Wallet positioning",
     "",
     formatConnectedWalletLine(wallet),
-    "- User participation should come from the connected wallet.",
+    "- User participation should originate from the connected wallet.",
     "- Managed strategy execution remains backend-controlled and separate from the user wallet.",
     "",
   ];
@@ -608,7 +608,7 @@ async function handleShowStrategies(wallet?: WalletContext): Promise<string> {
 
     if (strategy.id === "carv-1") {
       lines.push(
-        "- Positioning: live managed strategy with execution gated by capital, signals, and risk controls."
+        "- Positioning: managed strategy with live execution eligibility gated by capital, signals, and risk controls."
       );
     }
 
@@ -626,138 +626,304 @@ async function handleShowStrategies(wallet?: WalletContext): Promise<string> {
   return lines.join("\n");
 }
 
-
 async function handleShowCarv1(wallet?: WalletContext): Promise<string> {
   const data = await fetchJson<{
     ok: boolean;
     agentId: string;
     strategy: {
-      id: string;
-      name: string;
-      type?: string;
-      status?: string;
-      description?: string;
-      baseAsset?: string;
-      depositAsset?: string;
-      allowedAssets?: string[];
-      execution?: {
-        enabled?: boolean;
-        mode?: string;
-        route?: string;
-        cadenceSeconds?: number;
-      };
-      totals?: {
-        users?: number;
-        deposited?: number;
-        withdrawn?: number;
-        shares?: number;
-        totalValue?: number;
-        liquidValue?: number;
-        investedValue?: number;
-        reservedForWithdrawals?: number;
-        sharePrice?: number;
-        pendingWithdrawalAmount?: number;
-        pendingWithdrawalCount?: number;
-        updatedAt?: string;
-      };
-      riskPolicy?: {
-        minReservePct?: number;
-        maxPositionPct?: number;
-        maxTradePct?: number;
-        maxConcurrentPositions?: number;
-        minConfidence?: number;
-        cooldownMinutes?: number;
-        maxDailyTrades?: number;
-      };
+  id: string;
+  name: string;
+  type?: string;
+  status?: string;
+  description?: string;
+  runtime?: {
+    mode?: string;
+    version?: string;
+    loopIntervalSeconds?: number;
+    liveState?: string;
+    liveReason?: string;
+  };
+  assets?: {
+    baseAsset?: string;
+    depositAsset?: string;
+    allowedAssets?: string[];
+  };
+  execution?: {
+    enabled?: boolean;
+    mode?: string;
+    route?: string;
+    allowBuy?: boolean;
+    allowSell?: boolean;
+    maxLiveNotionalUsd?: number;
+    minLiveNotionalUsd?: number;
+    reconcileAfterTrade?: boolean;
+    maxPriceDeviationPct?: number;
+    maxConsecutiveLosses?: number;
+    maxCumulativeRealizedLossUsd?: number;
+    emergencyStop?: boolean;
+    liveState?: string;
+    liveReason?: string;
+  };
+  overview?: {
+    totalUsers?: number;
+    totalDeposited?: number;
+    totalWithdrawn?: number;
+    pendingWithdrawalAmount?: number;
+    pendingWithdrawalCount?: number;
+    valuation?: {
+      totalShares?: number;
+      totalValue?: number;
+      liquidValue?: number;
+      investedValue?: number;
+      reservedForWithdrawals?: number;
+      sharePrice?: number;
+      updatedAt?: string;
     };
+  };
+  policy?: {
+    minUsdcReservePct?: number;
+    maxPositionPct?: number;
+    maxTradePct?: number;
+    maxConcurrentPositions?: number;
+    minConfidence?: number;
+    cooldownMinutes?: number;
+    maxDailyTrades?: number;
+    softDrawdownPct?: number;
+    hardDrawdownPct?: number;
+    maxSlippageBps?: number;
+  };
+  depositPolicy?: {
+    sourceWalletRequired?: boolean;
+    withdrawToSourceWalletOnly?: boolean;
+    manualDepositConfirmation?: boolean;
+  };
+  withdrawalPolicy?: {
+    allowPartialWithdrawals?: boolean;
+    queueIfInsufficientLiquidity?: boolean;
+    manualExecution?: boolean;
+  };
+  accounting?: {
+    shareDecimals?: number;
+    initialSharePrice?: number;
+  };
+
+  // fallback old fields
+  baseAsset?: string;
+  depositAsset?: string;
+  allowedAssets?: string[];
+  totals?: {
+    users?: number;
+    deposited?: number;
+    withdrawn?: number;
+    shares?: number;
+    totalValue?: number;
+    liquidValue?: number;
+    investedValue?: number;
+    reservedForWithdrawals?: number;
+    sharePrice?: number;
+    pendingWithdrawalAmount?: number;
+    pendingWithdrawalCount?: number;
+    updatedAt?: string;
+  };
+  riskPolicy?: {
+    minReservePct?: number;
+    maxPositionPct?: number;
+    maxTradePct?: number;
+    maxConcurrentPositions?: number;
+    minConfidence?: number;
+    cooldownMinutes?: number;
+    maxDailyTrades?: number;
+  };
+};
   }>(`${CORSAIR_STRATEGY_API_URL}/strategies/carv-1`);
 
   const strategy = data.strategy;
 
   return [
-    `## ${strategy.name} (${strategy.id})`,
-    "",
-    strategy.description ??
-      "CARV-1 is Corsair’s managed strategy runtime for user-linked participation and backend-controlled execution.",
-    "",
-    "### Positioning",
-    "",
-    "- CARV-1 is running as a managed strategy, not as a direct user-controlled trading wallet.",
-    "- Execution is live-enabled but still constrained by available deployable capital, signal quality, and configured risk controls.",
-    "- User wallet participation and managed execution are intentionally separated.",
-    "",
-    "### Wallet positioning",
-    "",
-    formatConnectedWalletLine(wallet),
-    "- Deposits and user participation should be tied to the connected user wallet.",
-    "- Managed execution and treasury operations stay on the Corsair backend path, not the connected user wallet path.",
-    "",
-    "### Strategy profile",
-    "",
-    `- Status: ${strategy.status ?? "unknown"}`,
-    `- Type: ${strategy.type ?? "unknown"}`,
-    `- Base asset: ${strategy.baseAsset ?? "—"}`,
-    `- Deposit asset: ${strategy.depositAsset ?? "—"}`,
-    `- Allowed assets: ${
-      Array.isArray(strategy.allowedAssets) && strategy.allowedAssets.length > 0
+  `## ${strategy.name} (${strategy.id})`,
+  "",
+  strategy.description ??
+    "CARV-1 is Corsair’s managed strategy runtime for user-linked participation and backend-controlled execution.",
+  "",
+  "### Runtime state",
+  "",
+  `- Status: ${strategy.status ?? "unknown"}`,
+  `- Runtime mode: ${strategy.runtime?.mode ?? "—"}`,
+  `- Live state: ${strategy.execution?.liveState ?? "—"}`,
+  `- Live reason: ${strategy.execution?.liveReason ?? "—"}`,
+  `- Version: ${strategy.runtime?.version ?? "—"}`,
+  `- Loop cadence: ${
+    typeof strategy.runtime?.loopIntervalSeconds === "number"
+      ? `${strategy.runtime.loopIntervalSeconds}s`
+      : "—"
+  }`,
+  "",
+  "### Positioning",
+  "",
+  "- CARV-1 runs as a managed strategy, not as a direct user-controlled trading wallet.",
+  "- User participation is linked to the connected wallet.",
+  "- Managed execution remains backend-controlled and separate from the connected wallet.",
+  "- Live execution can still be blocked by available deployable capital, signal quality, or configured risk controls.",
+  "",
+  "### Wallet positioning",
+  "",
+  formatConnectedWalletLine(wallet),
+  "- Deposits and user participation should be tied to the connected user wallet.",
+  "- Managed execution and treasury operations remain on the Corsair backend path, not the connected user wallet path.",
+  "",
+  "### Strategy profile",
+  "",
+  `- Type: ${strategy.type ?? "unknown"}`,
+  `- Base asset: ${strategy.assets?.baseAsset ?? strategy.baseAsset ?? "—"}`,
+  `- Deposit asset: ${strategy.assets?.depositAsset ?? strategy.depositAsset ?? "—"}`,
+  `- Allowed assets: ${
+    Array.isArray(strategy.assets?.allowedAssets) && strategy.assets.allowedAssets.length > 0
+      ? strategy.assets.allowedAssets.join(", ")
+      : Array.isArray(strategy.allowedAssets) && strategy.allowedAssets.length > 0
         ? strategy.allowedAssets.join(", ")
         : "—"
-    }`,
-    `- Execution enabled: ${
-      typeof strategy.execution?.enabled === "boolean"
-        ? String(strategy.execution.enabled)
-        : "—"
-    }`,
-    `- Execution mode: ${strategy.execution?.mode ?? "—"}`,
-    `- Route: ${strategy.execution?.route ?? "—"}`,
-    `- Cadence: ${
-      typeof strategy.execution?.cadenceSeconds === "number"
-        ? `${strategy.execution.cadenceSeconds}s`
-        : "—"
-    }`,
-    "",
-    "### Overview",
-    "",
-    `- Users: ${strategy.totals?.users ?? "—"}`,
-    `- Deposited: ${strategy.totals?.deposited ?? "—"}`,
-    `- Withdrawn: ${strategy.totals?.withdrawn ?? "—"}`,
-    `- Shares: ${strategy.totals?.shares ?? "—"}`,
-    `- Total value: ${strategy.totals?.totalValue ?? "—"}`,
-    `- Liquid value: ${strategy.totals?.liquidValue ?? "—"}`,
-    `- Invested value: ${strategy.totals?.investedValue ?? "—"}`,
-    `- Reserved for withdrawals: ${strategy.totals?.reservedForWithdrawals ?? "—"}`,
-    `- Share price: ${strategy.totals?.sharePrice ?? "—"}`,
-    `- Pending withdrawal amount: ${strategy.totals?.pendingWithdrawalAmount ?? 0}`,
-    `- Pending withdrawal count: ${strategy.totals?.pendingWithdrawalCount ?? 0}`,
-    `- Updated: ${strategy.totals?.updatedAt ?? "—"}`,
-    "",
-    "### Risk policy",
-    "",
-    `- Min reserve: ${
-      typeof strategy.riskPolicy?.minReservePct === "number"
+  }`,
+  "",
+  "### Execution",
+  "",
+  `- Enabled: ${
+    typeof strategy.execution?.enabled === "boolean"
+      ? String(strategy.execution.enabled)
+      : "—"
+  }`,
+  `- Mode: ${strategy.execution?.mode ?? "—"}`,
+  `- Route: ${strategy.execution?.route ?? "—"}`,
+  `- Buy enabled: ${
+    typeof strategy.execution?.allowBuy === "boolean"
+      ? String(strategy.execution.allowBuy)
+      : "—"
+  }`,
+  `- Sell enabled: ${
+    typeof strategy.execution?.allowSell === "boolean"
+      ? String(strategy.execution.allowSell)
+      : "—"
+  }`,
+  `- Max live notional (USD): ${strategy.execution?.maxLiveNotionalUsd ?? "—"}`,
+  `- Min live notional (USD): ${strategy.execution?.minLiveNotionalUsd ?? "—"}`,
+  `- Reconcile after trade: ${
+    typeof strategy.execution?.reconcileAfterTrade === "boolean"
+      ? String(strategy.execution.reconcileAfterTrade)
+      : "—"
+  }`,
+  `- Max price deviation: ${
+    typeof strategy.execution?.maxPriceDeviationPct === "number"
+      ? `${(strategy.execution.maxPriceDeviationPct * 100).toFixed(2)}%`
+      : "—"
+  }`,
+  "",
+  "### Vault overview",
+  "",
+  `- Users: ${strategy.overview?.totalUsers ?? strategy.totals?.users ?? "—"}`,
+  `- Deposited: ${strategy.overview?.totalDeposited ?? strategy.totals?.deposited ?? "—"}`,
+  `- Withdrawn: ${strategy.overview?.totalWithdrawn ?? strategy.totals?.withdrawn ?? "—"}`,
+  `- Shares: ${strategy.overview?.valuation?.totalShares ?? strategy.totals?.shares ?? "—"}`,
+  `- Total value: ${
+    strategy.overview?.valuation?.totalValue ?? strategy.totals?.totalValue ?? "—"
+  }`,
+  `- Liquid value: ${
+    strategy.overview?.valuation?.liquidValue ?? strategy.totals?.liquidValue ?? "—"
+  }`,
+  `- Invested value: ${
+    strategy.overview?.valuation?.investedValue ?? strategy.totals?.investedValue ?? "—"
+  }`,
+  `- Reserved for withdrawals: ${
+    strategy.overview?.valuation?.reservedForWithdrawals ??
+    strategy.totals?.reservedForWithdrawals ??
+    "—"
+  }`,
+  `- Share price: ${
+    strategy.overview?.valuation?.sharePrice ?? strategy.totals?.sharePrice ?? "—"
+  }`,
+  `- Pending withdrawal amount: ${
+    strategy.overview?.pendingWithdrawalAmount ??
+    strategy.totals?.pendingWithdrawalAmount ??
+    0
+  }`,
+  `- Pending withdrawal count: ${
+    strategy.overview?.pendingWithdrawalCount ??
+    strategy.totals?.pendingWithdrawalCount ??
+    0
+  }`,
+  `- Updated: ${
+    strategy.overview?.valuation?.updatedAt ?? strategy.totals?.updatedAt ?? "—"
+  }`,
+  "",
+  "### Risk policy",
+  "",
+  `- Min reserve: ${
+    typeof strategy.policy?.minUsdcReservePct === "number"
+      ? `${(strategy.policy.minUsdcReservePct * 100).toFixed(2)}%`
+      : typeof strategy.riskPolicy?.minReservePct === "number"
         ? `${(strategy.riskPolicy.minReservePct * 100).toFixed(2)}%`
         : "—"
-    }`,
-    `- Max position: ${
-      typeof strategy.riskPolicy?.maxPositionPct === "number"
+  }`,
+  `- Max position: ${
+    typeof strategy.policy?.maxPositionPct === "number"
+      ? `${(strategy.policy.maxPositionPct * 100).toFixed(2)}%`
+      : typeof strategy.riskPolicy?.maxPositionPct === "number"
         ? `${(strategy.riskPolicy.maxPositionPct * 100).toFixed(2)}%`
         : "—"
-    }`,
-    `- Max trade: ${
-      typeof strategy.riskPolicy?.maxTradePct === "number"
+  }`,
+  `- Max trade: ${
+    typeof strategy.policy?.maxTradePct === "number"
+      ? `${(strategy.policy.maxTradePct * 100).toFixed(2)}%`
+      : typeof strategy.riskPolicy?.maxTradePct === "number"
         ? `${(strategy.riskPolicy.maxTradePct * 100).toFixed(2)}%`
         : "—"
-    }`,
-    `- Max concurrent positions: ${strategy.riskPolicy?.maxConcurrentPositions ?? "—"}`,
-    `- Min confidence: ${strategy.riskPolicy?.minConfidence ?? "—"}`,
-    `- Cooldown: ${
-      typeof strategy.riskPolicy?.cooldownMinutes === "number"
+  }`,
+  `- Max concurrent positions: ${
+    strategy.policy?.maxConcurrentPositions ??
+    strategy.riskPolicy?.maxConcurrentPositions ??
+    "—"
+  }`,
+  `- Min confidence: ${
+    strategy.policy?.minConfidence ?? strategy.riskPolicy?.minConfidence ?? "—"
+  }`,
+  `- Cooldown: ${
+    typeof strategy.policy?.cooldownMinutes === "number"
+      ? `${strategy.policy.cooldownMinutes} minutes`
+      : typeof strategy.riskPolicy?.cooldownMinutes === "number"
         ? `${strategy.riskPolicy.cooldownMinutes} minutes`
         : "—"
-    }`,
-    `- Max daily trades: ${strategy.riskPolicy?.maxDailyTrades ?? "—"}`,
-  ].join("\n");
-}
+  }`,
+  `- Max daily trades: ${
+    strategy.policy?.maxDailyTrades ?? strategy.riskPolicy?.maxDailyTrades ?? "—"
+  }`,
+  `- Soft drawdown: ${
+    typeof strategy.policy?.softDrawdownPct === "number"
+      ? `${(strategy.policy.softDrawdownPct * 100).toFixed(2)}%`
+      : "—"
+  }`,
+  `- Hard drawdown: ${
+    typeof strategy.policy?.hardDrawdownPct === "number"
+      ? `${(strategy.policy.hardDrawdownPct * 100).toFixed(2)}%`
+      : "—"
+  }`,
+  `- Max slippage: ${
+    typeof strategy.policy?.maxSlippageBps === "number"
+      ? `${strategy.policy.maxSlippageBps} bps`
+      : "—"
+  }`,
+  "",
+  "### Deposit and withdrawal policy",
+  "",
+  `- Source wallet required: ${strategy.depositPolicy?.sourceWalletRequired ?? "—"}`,
+  `- Withdraw to source wallet only: ${strategy.depositPolicy?.withdrawToSourceWalletOnly ?? "—"}`,
+  `- Manual deposit confirmation: ${strategy.depositPolicy?.manualDepositConfirmation ?? "—"}`,
+  `- Partial withdrawals allowed: ${strategy.withdrawalPolicy?.allowPartialWithdrawals ?? "—"}`,
+  `- Queue on insufficient liquidity: ${strategy.withdrawalPolicy?.queueIfInsufficientLiquidity ?? "—"}`,
+  `- Manual withdrawal execution: ${strategy.withdrawalPolicy?.manualExecution ?? "—"}`,
+  "",
+  "### Accounting",
+  "",
+  `- Share decimals: ${strategy.accounting?.shareDecimals ?? "—"}`,
+  `- Initial share price: ${strategy.accounting?.initialSharePrice ?? "—"}`,
+].join("\n");}
 
 async function executeSendArbitrumEth(
   intent: ParsedSendIntent,
@@ -877,7 +1043,7 @@ async function maybeHandleBackendIntent(
         "## CARV-1 deposit flow",
         "",
         formatConnectedWalletLine(wallet),
-        "- Deposit actions should use the connected user wallet.",
+        "- Deposit actions should originate from the connected user wallet.",
         "",
         "Next step: enter the amount you want to deposit into CARV-1.",
       ].join("\n"),
@@ -891,7 +1057,7 @@ async function maybeHandleBackendIntent(
         "## CARV-1 withdrawal flow",
         "",
         formatConnectedWalletLine(wallet),
-        "- Withdrawal actions should use the connected user wallet.",
+        "- Withdrawal actions should settle back to the connected user wallet according to strategy policy.",
         "",
         "Next step: enter the amount you want to withdraw from CARV-1.",
       ].join("\n"),
@@ -923,7 +1089,7 @@ async function maybeHandleBackendIntent(
       reply: [
         "## Connected wallet confirmation",
         "",
-        "Use the **Confirm wallet send** button in the last assistant card to execute this from the connected wallet.",
+        "Use the **Confirm wallet send** button in the most recent assistant card to execute this from the connected wallet.",
       ].join("\n"),
     };
   }
@@ -948,7 +1114,7 @@ async function maybeHandleBackendIntent(
       return {
         handled: true,
         reply:
-          "I couldn’t find a pending treasury send action to confirm. Start again with `send 0.001 ETH to 0x...`.",
+          "I couldn’t find a pending treasury transfer to confirm. Start again with `send 0.001 ETH to 0x...`.",
       };
     }
 
@@ -976,7 +1142,7 @@ async function maybeHandleBackendIntent(
     return {
       handled: true,
       reply: [
-        "To use the connected wallet flow, use this format:",
+        "To use the connected-wallet flow, use this format:",
         "",
         "`send 0.001 ETH from my wallet to 0x1234...abcd`",
       ].join("\n"),
@@ -987,7 +1153,7 @@ async function maybeHandleBackendIntent(
     return {
       handled: true,
       reply: [
-        "I’m ready to prepare an ETH send on Arbitrum, but this current default flow is treasury-managed.",
+        "I’m ready to prepare an ETH transfer on Arbitrum.",
         "",
         "Use either:",
         "",
