@@ -954,7 +954,7 @@ function AgentPageContent() {
   }
 
   return (
-    <div className="page-grid relative h-[100dvh] overflow-hidden">
+    <div className="page-grid relative h-[100svh] overflow-hidden md:h-[100dvh]">
       <OrbitalBackground />
 
       <input
@@ -1039,7 +1039,7 @@ function AgentPageContent() {
         </div>
       )}
 
-      <section className="relative mx-auto h-full min-h-0 max-w-[1440px] px-4 pt-4 pb-[max(12px,env(safe-area-inset-bottom))] md:px-8 md:pt-6">
+      <section className="relative mx-auto h-full min-h-0 max-w-[1440px] px-4 pt-4 pb-[calc(env(safe-area-inset-bottom)+88px)] md:px-8 md:pt-6 md:pb-[max(12px,env(safe-area-inset-bottom))]">
         <div className="grid h-full min-h-0 gap-6 xl:grid-cols-[274px_minmax(0,1fr)] xl:gap-10">
           <aside className="hidden xl:block">
             <div className="sticky top-[88px] h-[calc(100dvh-112px)]">
@@ -1196,7 +1196,7 @@ function AgentPageContent() {
                   )}
                 </div>
               ) : (
-                <div className="glass-panel mt-3 flex h-full min-h-0 flex-col overflow-hidden rounded-[26px] p-2.5 md:mt-6 md:rounded-[34px] md:p-4">
+                <div className="glass-panel mt-3 mb-[10px] flex h-full min-h-0 flex-col overflow-hidden rounded-[26px] p-2.5 md:mt-6 md:mb-0 md:rounded-[34px] md:p-4">
                   <div className="mb-2 px-1 pt-1 md:px-2">
                     <div className="mx-auto flex max-w-[740px] items-center justify-between gap-3">
                       <div className="text-[0.86rem] text-white/42 md:text-[0.9rem]">
@@ -1240,7 +1240,7 @@ function AgentPageContent() {
 
                   <div
                     ref={scrollContainerRef}
-                    className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-1 pt-1 pb-[140px] md:px-2"
+                    className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-1 pt-1 pb-[190px] md:px-2 md:pb-[160px]"
                   >
                     <div className="mx-auto max-w-[760px] space-y-5 md:max-w-[740px]">
                       {messages.map((message) =>
@@ -1264,8 +1264,8 @@ function AgentPageContent() {
                     </div>
                   </div>
 
-                  <div className="sticky bottom-0 left-0 right-0 z-20 border-t border-white/8 bg-[#07090d]/90 px-1 pt-2 backdrop-blur-xl md:px-2">
-                    <div className="mx-auto max-w-[760px] pb-[calc(env(safe-area-inset-bottom)+12px)] md:max-w-[740px]">
+                  <div className="sticky bottom-0 left-0 right-0 z-20 border-t border-white/8 bg-[#07090d]/95 px-1 pt-2 backdrop-blur-xl md:px-2">
+                    <div className="mx-auto max-w-[760px] pb-[calc(env(safe-area-inset-bottom)+16px)] md:max-w-[740px] md:pb-[calc(env(safe-area-inset-bottom)+12px)]">
                       <Composer
                         query={query}
                         onChangeQuery={setQuery}
@@ -1300,7 +1300,7 @@ function AgentPageContent() {
 
 function AgentPageFallback() {
   return (
-    <div className="page-grid relative h-[100dvh] overflow-hidden">
+    <div className="page-grid relative h-[100svh] overflow-hidden md:h-[100dvh]">
       <OrbitalBackground />
       <section className="relative mx-auto h-full max-w-[1440px] px-4 pt-6 md:px-8 md:pt-8">
         <div className="flex h-full items-center justify-center">
