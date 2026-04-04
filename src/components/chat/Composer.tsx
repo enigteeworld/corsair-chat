@@ -160,10 +160,7 @@ export function Composer({
       </div>
 
       <div className="mt-2 flex items-center justify-between px-2 text-[0.74rem] text-white/24">
-        <span>Enter to send · Shift+Enter for newline</span>
-        <span>
-          Up to {MAX_ATTACHMENTS} files · {MAX_ATTACHMENT_SIZE_MB} MB each
-        </span>
+        
       </div>
     </div>
   );

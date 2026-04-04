@@ -536,7 +536,9 @@ function AgentPageContent() {
     const trimmed = content.trim();
     const attachments = attachmentsOverride ?? pendingAttachments;
 
-    if ((!trimmed && attachments.length === 0) || isLoading || !activeSession) return;
+    if ((!trimmed && attachments.length === 0) || isLoading || !activeSession) {
+      return;
+    }
 
     const attachmentSummary =
       attachments.length > 0
@@ -1037,7 +1039,7 @@ function AgentPageContent() {
         </div>
       )}
 
-      <section className="relative mx-auto h-full min-h-0 overflow-hidden max-w-[1440px] px-4 pt-4 pb-[max(12px,env(safe-area-inset-bottom))] md:px-8 md:pt-6">
+      <section className="relative mx-auto h-full min-h-0 max-w-[1440px] px-4 pt-4 pb-[max(12px,env(safe-area-inset-bottom))] md:px-8 md:pt-6">
         <div className="grid h-full min-h-0 gap-6 xl:grid-cols-[274px_minmax(0,1fr)] xl:gap-10">
           <aside className="hidden xl:block">
             <div className="sticky top-[88px] h-[calc(100dvh-112px)]">
@@ -1074,8 +1076,8 @@ function AgentPageContent() {
             </div>
           </aside>
 
-          <div className="flex h-full min-h-0 overflow-hidden items-start justify-center">
-            <div className="relative flex h-full min-h-0 w-full max-w-[760px] flex-col overflow-hidden md:max-w-[840px]">
+          <div className="flex h-full min-h-0 items-start justify-center">
+            <div className="relative flex h-full min-h-0 w-full max-w-[760px] flex-col md:max-w-[840px]">
               <button
                 type="button"
                 aria-label="Open sidebar"
@@ -1086,7 +1088,7 @@ function AgentPageContent() {
               </button>
 
               {!hasMessages ? (
-                <div className="min-h-0 overflow-y-auto px-0 pt-8 pb-4 text-center md:pt-14">
+                <div className="overflow-y-auto px-0 pt-8 pb-4 text-center md:pt-14">
                   <h1 className="mx-auto max-w-[720px] text-balance text-[clamp(2rem,4.5vw,3.95rem)] font-semibold leading-[0.98] tracking-[-0.05em] text-white/92">
                     Discover and create
                     <br className="hidden sm:block" /> with{" "}
@@ -1194,7 +1196,7 @@ function AgentPageContent() {
                   )}
                 </div>
               ) : (
-                <div className="glass-panel mt-3 flex h-full min-h-0 max-h-full flex-col overflow-hidden rounded-[26px] p-2.5 md:mt-6 md:rounded-[34px] md:p-4">
+                <div className="glass-panel mt-3 flex h-full min-h-0 flex-col overflow-hidden rounded-[26px] p-2.5 md:mt-6 md:rounded-[34px] md:p-4">
                   <div className="mb-2 px-1 pt-1 md:px-2">
                     <div className="mx-auto flex max-w-[740px] items-center justify-between gap-3">
                       <div className="text-[0.86rem] text-white/42 md:text-[0.9rem]">
@@ -1236,10 +1238,10 @@ function AgentPageContent() {
                     </div>
                   </div>
 
-                 <div
-  ref={scrollContainerRef}
-  className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-1 pt-1 pb-[140px] md:px-2"
->
+                  <div
+                    ref={scrollContainerRef}
+                    className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-1 pt-1 pb-[140px] md:px-2"
+                  >
                     <div className="mx-auto max-w-[760px] space-y-5 md:max-w-[740px]">
                       {messages.map((message) =>
                         message.role === "user" ? (
@@ -1262,8 +1264,8 @@ function AgentPageContent() {
                     </div>
                   </div>
 
-                  <div className="shrink-0 border-t border-white/8 bg-[#07090d]/90 px-1 pt-2 pb-[max(8px,env(safe-area-inset-bottom))] backdrop-blur-md md:px-2">
-                    <div className="mx-auto max-w-[760px] md:max-w-[740px]">
+                  <div className="sticky bottom-0 left-0 right-0 z-20 border-t border-white/8 bg-[#07090d]/90 px-1 pt-2 backdrop-blur-xl md:px-2">
+                    <div className="mx-auto max-w-[760px] pb-[calc(env(safe-area-inset-bottom)+12px)] md:max-w-[740px]">
                       <Composer
                         query={query}
                         onChangeQuery={setQuery}
