@@ -3,7 +3,6 @@
 import { useEffect, useRef } from "react";
 import type { KeyboardEvent } from "react";
 import {
-  FileImage,
   Loader2,
   Mic,
   Paperclip,
@@ -23,8 +22,8 @@ function AutoResizeTextarea({
   onKeyDown,
   placeholder,
   className,
-  minHeight = 30,
-  maxHeight = 160,
+  minHeight = 20,
+  maxHeight = 100,
 }: {
   value: string;
   onChange: (value: string) => void;
@@ -67,17 +66,16 @@ function AttachmentChip({
   onRemove: () => void;
 }) {
   return (
-    <div className="inline-flex max-w-full items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-[0.76rem] text-white/72">
-      <Paperclip className="h-3.5 w-3.5 shrink-0 text-white/46" />
-      <span className="max-w-[140px] truncate md:max-w-[240px]">{attachment.name}</span>
-      <span className="shrink-0 text-white/34">{formatBytes(attachment.size)}</span>
+    <div className="inline-flex max-w-full items-center gap-1.5 rounded-md bg-white/[0.08] px-2 py-1 text-[0.7rem] text-white/70">
+      <span className="max-w-[100px] truncate md:max-w-[160px]">{attachment.name}</span>
+      <span className="shrink-0 text-white/40">{formatBytes(attachment.size)}</span>
       <button
         type="button"
         onClick={onRemove}
-        className="shrink-0 text-white/44 transition hover:text-white/88"
+        className="shrink-0 rounded p-0.5 text-white/40 transition hover:bg-white/10 hover:text-white/80"
         aria-label={`Remove ${attachment.name}`}
       >
-        <X className="h-3.5 w-3.5" />
+        <X className="h-3 w-3" />
       </button>
     </div>
   );
@@ -107,9 +105,9 @@ export function Composer({
   const canSubmit = !isLoading && (query.trim() || pendingAttachments.length > 0);
 
   return (
-    <div className="soft-pill rounded-[20px] px-3 py-2.5 md:rounded-[26px] md:px-5 md:py-4">
+    <div className="rounded-xl border border-white/10 bg-[#1a1a1a] shadow-lg">
       {pendingAttachments.length > 0 && (
-        <div className="mb-2.5 flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-1.5 border-b border-white/5 px-2.5 py-1.5">
           {pendingAttachments.map((attachment) => (
             <AttachmentChip
               key={attachment.id}
@@ -120,40 +118,39 @@ export function Composer({
         </div>
       )}
 
-      <div className="flex items-center gap-2 rounded-[16px] bg-white/[0.02] px-2 py-1.5 md:gap-3 md:rounded-[18px] md:px-3 md:py-2">
+      <div className="flex items-end gap-1 p-1.5">
         <button
           type="button"
           onClick={onOpenFilePicker}
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-white/30 transition hover:bg-white/[0.04] hover:text-white/54 md:h-10 md:w-10"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-white/40 transition hover:bg-white/[0.08] hover:text-white/60"
           aria-label={`Attach files (max ${MAX_ATTACHMENTS}, up to ${MAX_ATTACHMENT_SIZE_MB}MB each)`}
-          title={`Attach files (max ${MAX_ATTACHMENTS}, up to ${MAX_ATTACHMENT_SIZE_MB}MB each)`}
         >
-          <FileImage className="h-4 w-4 md:h-[18px] md:w-[18px]" />
+          <Paperclip className="h-[18px] w-[18px]" />
         </button>
 
         <AutoResizeTextarea
           value={query}
           onChange={onChangeQuery}
           onKeyDown={onKeyDown}
-          placeholder="Ask Corsair anything..."
-          minHeight={30}
-          maxHeight={160}
-          className="flex-1 resize-none overflow-y-auto border-none bg-transparent py-1 text-[0.98rem] leading-6 text-white/82 placeholder:text-white/30 outline-none md:text-[1.02rem] md:leading-7"
+          placeholder="Message Corsair..."
+          minHeight={20}
+          maxHeight={100}
+          className="flex-1 resize-none overflow-y-auto border-none bg-transparent py-2 px-1 text-[0.95rem] leading-5 text-white/90 placeholder:text-white/35 outline-none"
         />
 
         <button
           type="button"
-          className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-full text-white/24 transition hover:bg-white/[0.04] hover:text-white/42 sm:flex md:h-10 md:w-10"
+          className="hidden h-8 w-8 shrink-0 items-center justify-center rounded-lg text-white/30 transition hover:bg-white/[0.08] hover:text-white/50 sm:flex"
           aria-label="Voice input"
         >
-          <Mic className="h-4 w-4 md:h-[18px] md:w-[18px]" />
+          <Mic className="h-[18px] w-[18px]" />
         </button>
 
         <button
           type="button"
           onClick={onSubmit}
           disabled={!canSubmit}
-          className="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-full bg-white text-black transition hover:scale-[1.05] hover:bg-white/90 active:scale-[0.97] disabled:cursor-not-allowed disabled:bg-white/55 md:h-[48px] md:w-[48px]"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-white text-black transition hover:scale-105 hover:bg-white/90 active:scale-95 disabled:cursor-not-allowed disabled:bg-white/40"
           aria-label="Send message"
         >
           {isLoading ? (

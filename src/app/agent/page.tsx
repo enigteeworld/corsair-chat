@@ -43,6 +43,7 @@ import type {
 const SYMBOL_OPTIONS = ["😏", "⚡", "🧠", "✦"];
 const ARBITRUM_SEPOLIA_CHAIN_ID = 421614;
 const ARBITRUM_SEPOLIA_CHAIN_NAME = "Arbitrum Sepolia";
+const MOBILE_TOP_OFFSET = 78;
 
 type ParsedWalletSend = {
   amount: string;
@@ -131,11 +132,6 @@ function OrbitalBackground() {
       <div className="orbital-ring left-1/2 top-[44px] h-[820px] w-[820px] -translate-x-1/2 max-md:top-[140px] max-md:h-[500px] max-md:w-[500px]" />
       <div className="orbital-ring left-1/2 top-[154px] h-[620px] w-[620px] -translate-x-1/2 max-md:top-[220px] max-md:h-[360px] max-md:w-[360px]" />
       <div className="orbital-ring left-1/2 top-[254px] h-[430px] w-[430px] -translate-x-1/2 max-md:top-[285px] max-md:h-[230px] max-md:w-[230px]" />
-      <div className="orbital-dot left-[4.3%] top-[158px] max-md:left-[4%] max-md:top-[360px]" />
-      <div className="orbital-dot right-[7.8%] top-[266px] max-md:right-[7%] max-md:top-[490px]" />
-      <div className="orbital-dot right-[26%] top-[341px] max-md:right-[22%] max-md:top-[330px]" />
-      <div className="floating-diamond left-[8%] top-[530px] max-md:left-[2%] max-md:top-[930px]" />
-      <div className="floating-diamond right-[9%] top-[220px] max-md:right-[4%] max-md:top-[250px]" />
     </div>
   );
 }
@@ -167,7 +163,7 @@ function QuickAction({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`flex h-[44px] items-center justify-center gap-2 rounded-full border bg-black/18 px-3 text-[0.86rem] font-medium leading-none transition hover:scale-[1.01] hover:bg-white/[0.03] disabled:cursor-not-allowed disabled:opacity-60 md:h-[56px] md:gap-2.5 md:px-6 md:text-[0.96rem] ${toneClass}`}
+      className={`flex h-10 items-center justify-center gap-2 rounded-full border bg-black/18 px-3 text-[0.8rem] font-medium leading-none transition hover:scale-[1.01] hover:bg-white/[0.03] disabled:cursor-not-allowed disabled:opacity-60 md:h-11 md:px-4 md:text-[0.85rem] ${toneClass}`}
     >
       <span className="shrink-0">{icon}</span>
       <span>{label}</span>
@@ -188,7 +184,7 @@ function PersonalityChip({
     <button
       type="button"
       onClick={onClick}
-      className={`inline-flex h-[36px] items-center justify-center rounded-full border px-4 text-[0.86rem] font-medium transition duration-200 md:h-[40px] md:text-[0.92rem] ${
+      className={`inline-flex h-8 items-center justify-center rounded-full border px-3 text-[0.8rem] font-medium transition duration-200 md:h-9 md:px-4 md:text-[0.85rem] ${
         isActive
           ? "scale-[1.02] border-cyan-400/30 bg-cyan-400/[0.08] text-cyan-200 shadow-[0_0_0_1px_rgba(34,211,238,0.08),0_12px_28px_rgba(34,211,238,0.10),inset_0_1px_0_rgba(255,255,255,0.04)]"
           : "border-white/10 bg-white/[0.03] text-white/64 hover:scale-[1.015] hover:bg-white/[0.05] hover:text-white/84"
@@ -216,26 +212,26 @@ function PersonalityEditor({
     <div
       className={`glass-panel mx-auto text-left ${
         compact
-          ? "w-full max-w-[500px] rounded-[20px] p-4 md:rounded-[22px] md:p-4"
-          : "mt-5 max-w-[540px] rounded-[20px] p-4 md:mt-6 md:rounded-[22px] md:p-4"
+          ? "w-full max-w-[480px] rounded-[18px] p-4"
+          : "mt-4 max-w-[520px] rounded-[18px] p-4 md:mt-6"
       }`}
     >
-      <div className="mx-auto max-w-[480px]">
+      <div className="mx-auto max-w-[440px]">
         <div className="text-center">
-          <div className="text-[1rem] font-semibold tracking-[-0.03em] text-white/94 md:text-[1.12rem]">
+          <div className="text-[0.95rem] font-semibold tracking-[-0.02em] text-white/94 md:text-[1.05rem]">
             Configure Corsair
           </div>
-          <p className="mx-auto mt-1.5 max-w-[420px] text-balance text-[0.84rem] leading-5 text-white/56 md:text-[0.9rem]">
+          <p className="mx-auto mt-1 max-w-[400px] text-balance text-[0.8rem] leading-4 text-white/56 md:text-[0.85rem]">
             Configure how Corsair operates in this session.
           </p>
         </div>
 
-        <div className="mt-4 space-y-3.5 md:mt-5 md:space-y-4">
+        <div className="mt-3 space-y-2.5 md:mt-4 md:space-y-3">
           <div>
-            <div className="mb-1.5 text-[0.72rem] font-semibold uppercase tracking-[0.15em] text-white/40">
+            <div className="mb-1 text-[0.65rem] font-semibold uppercase tracking-[0.15em] text-white/40">
               Tone
             </div>
-            <div className="flex flex-wrap gap-2.5">
+            <div className="flex flex-wrap gap-1.5">
               {(["calm", "sharp", "blunt", "playful"] as PersonalityTone[]).map(
                 (tone) => (
                   <PersonalityChip
@@ -251,10 +247,10 @@ function PersonalityEditor({
           </div>
 
           <div>
-            <div className="mb-1.5 text-[0.72rem] font-semibold uppercase tracking-[0.15em] text-white/40">
+            <div className="mb-1 text-[0.65rem] font-semibold uppercase tracking-[0.15em] text-white/40">
               Style
             </div>
-            <div className="flex flex-wrap gap-2.5">
+            <div className="flex flex-wrap gap-1.5">
               {(["concise", "balanced", "detailed"] as PersonalityStyle[]).map(
                 (style) => (
                   <PersonalityChip
@@ -270,10 +266,10 @@ function PersonalityEditor({
           </div>
 
           <div>
-            <div className="mb-1.5 text-[0.72rem] font-semibold uppercase tracking-[0.15em] text-white/40">
+            <div className="mb-1 text-[0.65rem] font-semibold uppercase tracking-[0.15em] text-white/40">
               Symbol
             </div>
-            <div className="flex flex-wrap gap-2.5">
+            <div className="flex flex-wrap gap-1.5">
               {SYMBOL_OPTIONS.map((symbol) => (
                 <PersonalityChip
                   key={symbol}
@@ -284,26 +280,26 @@ function PersonalityEditor({
                     })
                   }
                 >
-                  <span className="text-[1rem] md:text-[1.02rem]">{symbol}</span>
+                  <span className="text-[0.95rem]">{symbol}</span>
                 </PersonalityChip>
               ))}
             </div>
           </div>
 
-          <div className="rounded-[14px] border border-white/10 bg-white/[0.03] px-3.5 py-2.5 text-center">
-            <div className="text-[0.72rem] font-semibold uppercase tracking-[0.13em] text-white/36">
+          <div className="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-center">
+            <div className="text-[0.65rem] font-semibold uppercase tracking-[0.13em] text-white/36">
               Current profile
             </div>
-            <div className="mt-1 text-[0.9rem] font-medium text-white/88 md:text-[0.96rem]">
+            <div className="mt-0.5 text-[0.85rem] font-medium text-white/88 md:text-[0.9rem]">
               {personalitySummary(personality)}
             </div>
           </div>
 
-          <div className="flex flex-col gap-2 pt-0.5 sm:flex-row sm:justify-center">
+          <div className="flex flex-col gap-1.5 pt-0.5 sm:flex-row sm:justify-center">
             <button
               type="button"
               onClick={onUseDefault}
-              className="inline-flex h-[40px] items-center justify-center rounded-full border border-white/10 bg-white/[0.03] px-4 text-[0.86rem] font-medium text-white/68 transition hover:bg-white/[0.05] hover:text-white/88"
+              className="inline-flex h-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] px-4 text-[0.8rem] font-medium text-white/68 transition hover:bg-white/[0.05] hover:text-white/88"
             >
               Use default
             </button>
@@ -311,7 +307,7 @@ function PersonalityEditor({
             <button
               type="button"
               onClick={onSave}
-              className="inline-flex h-[40px] items-center justify-center gap-2 rounded-full bg-white px-4 text-[0.86rem] font-medium text-black transition hover:bg-white/90"
+              className="inline-flex h-9 items-center justify-center gap-2 rounded-full bg-white px-4 text-[0.8rem] font-medium text-black transition hover:bg-white/90"
             >
               <Check className="h-4 w-4" />
               Save profile
@@ -331,7 +327,6 @@ function AgentPageContent() {
     useState<PendingWalletExecution | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
-  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const homepageIntentHandledRef = useRef(false);
 
   const router = useRouter();
@@ -753,7 +748,7 @@ function AgentPageContent() {
         [
           "## Connected wallet send",
           "",
-          "I couldn’t parse the pending connected-wallet send request.",
+          "I couldn't parse the pending connected-wallet send request.",
         ].join("\n")
       );
       return;
@@ -954,7 +949,7 @@ function AgentPageContent() {
   }
 
   return (
-    <div className="page-grid relative h-[100svh] overflow-hidden md:h-[100dvh]">
+    <div className="page-grid relative h-[100svh] overflow-hidden bg-[#07090d] md:h-[100dvh]">
       <OrbitalBackground />
 
       <input
@@ -965,6 +960,7 @@ function AgentPageContent() {
         onChange={handleFilesSelected}
       />
 
+      {/* Mobile Sidebar Overlay */}
       {isSidebarOpen && (
         <div className="fixed inset-0 z-50 xl:hidden">
           <button
@@ -974,26 +970,20 @@ function AgentPageContent() {
             onClick={() => setIsSidebarOpen(false)}
           />
 
-          <div className="absolute left-0 top-0 h-full w-[min(86vw,340px)] border-r border-white/8 bg-[#07090d]/95 shadow-[0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur-xl">
-            <div className="flex items-center justify-between border-b border-white/8 px-4 py-4">
-              <div className="text-[1rem] font-semibold text-white/88">Chats</div>
-              <button
-                type="button"
-                aria-label="Close sidebar"
-                onClick={() => setIsSidebarOpen(false)}
-                className="flex h-10 w-10 items-center justify-center rounded-full text-white/70 transition hover:bg-white/[0.05] hover:text-white"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-
-            <div className="flex h-[calc(100%-73px)] flex-col px-4 py-4">
+          <div
+            className="absolute left-0 w-[min(86vw,340px)] border-r border-white/8 bg-[#07090d]/95 shadow-[0_24px_80px_rgba(0,0,0,0.45)] backdrop-blur-xl"
+            style={{
+              top: MOBILE_TOP_OFFSET,
+              height: `calc(100% - ${MOBILE_TOP_OFFSET}px)`,
+            }}
+          >
+            <div className="flex h-full flex-col px-4 py-4">
               <button
                 type="button"
                 onClick={handleNewChat}
                 className="mb-4 flex h-[50px] w-full items-center justify-center gap-2 rounded-[14px] bg-white text-[0.98rem] font-medium text-black shadow-[0_10px_24px_rgba(255,255,255,0.06)] transition hover:bg-white/90"
               >
-                <Plus className="h-4.5 w-4.5" />
+                <Plus className="h-5 w-5" />
                 New Chat
               </button>
 
@@ -1010,20 +1000,21 @@ function AgentPageContent() {
         </div>
       )}
 
+      {/* Reconfigure Modal */}
       {isReconfigureOpen && activeSession && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
           <button
             type="button"
             aria-label="Close reconfigure modal"
-            className="absolute inset-0 bg-black/55 backdrop-blur-[3px]"
+            className="absolute inset-0 bg-black/70 backdrop-blur-sm"
             onClick={() => setIsReconfigureOpen(false)}
           />
 
-          <div className="relative w-full max-w-[520px]">
+          <div className="relative w-full max-w-[460px]">
             <button
               type="button"
               onClick={() => setIsReconfigureOpen(false)}
-              className="absolute right-4 top-4 z-20 flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-white/72 transition hover:bg-white/[0.08] hover:text-white"
+              className="absolute -top-10 right-0 z-20 flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white/70 transition hover:bg-white/20 hover:text-white"
             >
               <X className="h-4 w-4" />
             </button>
@@ -1040,102 +1031,106 @@ function AgentPageContent() {
       )}
 
       <section className="relative mx-auto h-full min-h-0 max-w-[1440px] px-4 pt-4 pb-[calc(env(safe-area-inset-bottom)+88px)] md:px-8 md:pt-6 md:pb-[max(12px,env(safe-area-inset-bottom))]">
-        <div className="grid h-full min-h-0 gap-6 xl:grid-cols-[274px_minmax(0,1fr)] xl:gap-10">
+        <div className="grid h-full min-h-0 gap-6 xl:grid-cols-[240px_minmax(0,1fr)] xl:gap-8">
+          {/* Desktop Sidebar */}
           <aside className="hidden xl:block">
-            <div className="sticky top-[88px] h-[calc(100dvh-112px)]">
-              <div className="glass-panel flex h-full w-[274px] flex-col rounded-[22px]">
-                <div className="px-5 pb-4 pt-5">
-                  <div className="text-[1.75rem] font-semibold leading-none tracking-[-0.04em] text-white/92">
-                    Chats
+            <div className="pt-5">
+              <div className="h-[calc(100dvh-128px)] rounded-[24px] border border-white/8 bg-white/[0.025] backdrop-blur-md">
+                <div className="flex h-full flex-col p-3">
+                  <div className="mb-3">
+                    <div className="text-[1.25rem] font-semibold tracking-tight text-white/90">
+                      Chats
+                    </div>
+                    <div className="mt-0.5 text-[0.8rem] text-white/40">
+                      Corsair conversation history
+                    </div>
                   </div>
-                  <div className="mt-2 text-[0.92rem] font-medium text-white/50">
-                    Corsair conversation history
-                  </div>
-                </div>
 
-                <div className="border-t border-white/8 px-4 py-4">
                   <button
                     type="button"
                     onClick={handleNewChat}
-                    className="flex h-[52px] w-full items-center justify-center gap-2 rounded-[14px] bg-white text-[0.98rem] font-medium text-black shadow-[0_10px_24px_rgba(255,255,255,0.06)] transition hover:bg-white/90"
+                    className="mb-3 flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-white text-[0.85rem] font-medium text-black transition hover:bg-white/90"
                   >
-                    <Plus className="h-4.5 w-4.5" />
+                    <Plus className="h-4 w-4" />
                     New Chat
                   </button>
-                </div>
 
-                <div className="min-h-0 flex-1 overflow-y-auto px-3 pb-3">
-                  <SessionList
-                    sessions={sessions}
-                    activeSessionId={activeSessionId}
-                    onSelectSession={handleSelectSession}
-                    onDeleteSession={handleDeleteSession}
-                  />
+                  <div className="min-h-0 flex-1 overflow-y-auto">
+                    <SessionList
+                      sessions={sessions}
+                      activeSessionId={activeSessionId}
+                      onSelectSession={handleSelectSession}
+                      onDeleteSession={handleDeleteSession}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
           </aside>
 
-          <div className="flex h-full min-h-0 items-start justify-center">
-            <div className="relative flex h-full min-h-0 w-full max-w-[760px] flex-col md:max-w-[840px]">
+          {/* Main Content */}
+          <main className="relative flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+            {!isSidebarOpen && (
               <button
                 type="button"
                 aria-label="Open sidebar"
                 onClick={() => setIsSidebarOpen(true)}
-                className="absolute left-0 top-[1px] z-20 flex h-10 w-10 items-center justify-center rounded-[12px] border border-white/10 bg-black/20 text-white/82 backdrop-blur-sm transition hover:bg-white/[0.05] hover:text-white md:hidden"
+                className="fixed left-4 top-[84px] z-40 flex h-10 w-10 items-center justify-center rounded-[12px] border border-white/10 bg-black/35 text-white/82 backdrop-blur-md transition hover:bg-white/[0.06] hover:text-white xl:hidden"
               >
-                <PanelLeft className="h-4.5 w-4.5" />
+                <PanelLeft className="h-5 w-5" />
               </button>
+            )}
 
-              {!hasMessages ? (
-                <div className="overflow-y-auto px-0 pt-8 pb-4 text-center md:pt-14">
-                  <h1 className="mx-auto max-w-[720px] text-balance text-[clamp(2rem,4.5vw,3.95rem)] font-semibold leading-[0.98] tracking-[-0.05em] text-white/92">
+            {!hasMessages ? (
+              <div className="flex flex-1 flex-col overflow-y-auto px-4 pb-4">
+                <div className="flex min-h-full flex-col items-center justify-center">
+                  <h1 className="mb-6 text-center text-[clamp(1.5rem,5vw,2.5rem)] font-semibold leading-tight tracking-tight text-white/90">
                     Discover and create
-                    <br className="hidden sm:block" /> with{" "}
-                    <span className="text-cyan-300/80">Corsair</span>
+                    <br />
+                    with <span className="text-cyan-400/80">Corsair</span>
                   </h1>
 
                   {!activePersonality.isConfigured ? (
-                    <div className="mx-auto mt-4 md:mt-5">
-                      <PersonalityEditor
-                        personality={activePersonality}
-                        onChange={(partial) => setActivePersonality(partial)}
-                        onSave={() =>
-                          setActivePersonality(
-                            {
-                              tone: activePersonality.tone,
-                              style: activePersonality.style,
-                              symbol: activePersonality.symbol ?? "",
-                            },
-                            true
-                          )
-                        }
-                        onUseDefault={handleSkipPersonalitySetup}
-                      />
-                    </div>
+                    <PersonalityEditor
+                      personality={activePersonality}
+                      onChange={(partial) => setActivePersonality(partial)}
+                      onSave={() =>
+                        setActivePersonality(
+                          {
+                            tone: activePersonality.tone,
+                            style: activePersonality.style,
+                            symbol: activePersonality.symbol ?? "",
+                          },
+                          true
+                        )
+                      }
+                      onUseDefault={handleSkipPersonalitySetup}
+                    />
                   ) : (
-                    <div className="glass-panel mx-auto mt-7 rounded-[28px] p-2.5 md:mt-9 md:rounded-[32px] md:p-3">
+                    <div className="w-full max-w-[600px]">
                       <div className="mb-3 flex items-center justify-center">
-                        <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-[0.84rem] text-white/62 md:text-[0.88rem]">
+                        <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-[0.75rem] text-white/60">
                           <span>Profile:</span>
-                          <span className="font-medium text-white/84">
+                          <span className="font-medium text-white/80">
                             {personalitySummary(activePersonality)}
                           </span>
                         </div>
                       </div>
 
-                      <Composer
-                        query={query}
-                        onChangeQuery={setQuery}
-                        onKeyDown={handleComposerKeyDown}
-                        onSubmit={handleSubmit}
-                        isLoading={isLoading}
-                        onOpenFilePicker={openFilePicker}
-                        pendingAttachments={pendingAttachments}
-                        onRemoveAttachment={removeAttachment}
-                      />
+                      <div className="mb-4 px-1">
+                        <Composer
+                          query={query}
+                          onChangeQuery={setQuery}
+                          onKeyDown={handleComposerKeyDown}
+                          onSubmit={handleSubmit}
+                          isLoading={isLoading}
+                          onOpenFilePicker={openFilePicker}
+                          pendingAttachments={pendingAttachments}
+                          onRemoveAttachment={removeAttachment}
+                        />
+                      </div>
 
-                      <div className="mt-4 grid grid-cols-2 gap-3 md:mt-5">
+                      <div className="grid grid-cols-2 gap-2 px-1 md:grid-cols-4">
                         <QuickAction
                           label="Discover Ideas"
                           tone="emerald"
@@ -1143,7 +1138,7 @@ function AgentPageContent() {
                           onClick={() =>
                             handleQuickAction("Brainstorm a few strong ideas I can explore.")
                           }
-                          icon={<TrendingUp className="h-4 w-4 md:h-4.5 md:w-4.5" />}
+                          icon={<TrendingUp className="h-4 w-4" />}
                         />
 
                         <QuickAction
@@ -1151,7 +1146,7 @@ function AgentPageContent() {
                           tone="fuchsia"
                           disabled={isLoading}
                           onClick={handleGenerateImageAction}
-                          icon={<Sparkles className="h-4 w-4 md:h-4.5 md:w-4.5" />}
+                          icon={<Sparkles className="h-4 w-4" />}
                         />
 
                         <QuickAction
@@ -1163,7 +1158,7 @@ function AgentPageContent() {
                               "Help me sketch a short video concept and storyboard."
                             )
                           }
-                          icon={<Video className="h-4 w-4 md:h-4.5 md:w-4.5" />}
+                          icon={<Video className="h-4 w-4" />}
                         />
 
                         <QuickAction
@@ -1175,19 +1170,19 @@ function AgentPageContent() {
                               "Help me shape a music concept and creative direction."
                             )
                           }
-                          icon={<Music4 className="h-4 w-4 md:h-4.5 md:w-4.5" />}
+                          icon={<Music4 className="h-4 w-4" />}
                         />
                       </div>
 
-                      <div className="mt-4 text-center text-[0.9rem] font-medium text-white/40 md:mt-5 md:text-[0.94rem]">
+                      <div className="mt-6 text-center text-[0.75rem] text-white/30">
                         Powered by x402 micropayments
                       </div>
 
-                      <div className="mt-2 text-center text-[0.9rem] font-medium text-white/42 md:text-[0.94rem]">
+                      <div className="mt-1 text-center text-[0.75rem] text-white/30">
                         Mail us at:{" "}
                         <a
                           href="mailto:corsair-chat@agentmail.to"
-                          className="underline underline-offset-4 text-white/70 hover:text-white"
+                          className="text-white/50 underline underline-offset-2 hover:text-white/70"
                         >
                           corsair-chat@agentmail.to
                         </a>
@@ -1195,54 +1190,40 @@ function AgentPageContent() {
                     </div>
                   )}
                 </div>
-              ) : (
-                <div className="glass-panel mt-3 mb-[10px] flex h-full min-h-0 flex-col overflow-hidden rounded-[26px] p-2.5 md:mt-6 md:mb-0 md:rounded-[34px] md:p-4">
-                  <div className="mb-2 px-1 pt-1 md:px-2">
-                    <div className="mx-auto flex max-w-[740px] items-center justify-between gap-3">
-                      <div className="text-[0.86rem] text-white/42 md:text-[0.9rem]">
-                        Active profile:{" "}
-                        <span className="font-medium text-white/76">
-                          {personalitySummary(activePersonality)}
-                        </span>
-                      </div>
-
-                      <div className="hidden items-center gap-2 md:flex">
-                        <div className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-[0.78rem] text-white/56">
-                          Wallet:{" "}
-                          {formatWalletBalance(
-                            balanceData
-                              ? formatUnits(balanceData.value, balanceData.decimals)
-                              : undefined,
-                            balanceData?.symbol
-                          )}
-                        </div>
-
-                        <button
-                          type="button"
-                          onClick={() => setIsReconfigureOpen(true)}
-                          className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-[0.82rem] text-white/56 transition hover:bg-white/[0.06] hover:text-white/82"
-                        >
-                          <SlidersHorizontal className="h-3.5 w-3.5" />
-                          Reconfigure
-                        </button>
-                      </div>
-
-                      <button
-                        type="button"
-                        onClick={() => setIsReconfigureOpen(true)}
-                        className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-[0.82rem] text-white/56 transition hover:bg-white/[0.06] hover:text-white/82 md:hidden"
-                      >
-                        <SlidersHorizontal className="h-3.5 w-3.5" />
-                        Reconfigure
-                      </button>
-                    </div>
+              </div>
+            ) : (
+              <>
+                <header className="flex h-9 shrink-0 items-center justify-between border-b border-white/8 px-3 pl-14 md:h-10 md:px-5 md:pl-5">
+                  <div className="min-w-0 flex items-center gap-2">
+                    <span className="truncate text-[0.72rem] font-medium text-white/42 md:text-[0.76rem]">
+                      {personalitySummary(activePersonality)}
+                    </span>
                   </div>
 
-                  <div
-                    ref={scrollContainerRef}
-                    className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-1 pt-1 pb-[190px] md:px-2 md:pb-[160px]"
-                  >
-                    <div className="mx-auto max-w-[760px] space-y-5 md:max-w-[740px]">
+                  <div className="flex items-center gap-1.5 md:gap-2">
+                    <div className="hidden rounded-full border border-white/8 bg-white/[0.03] px-2 py-1 text-[0.66rem] text-white/42 md:block">
+                      {formatWalletBalance(
+                        balanceData
+                          ? formatUnits(balanceData.value, balanceData.decimals)
+                          : undefined,
+                        balanceData?.symbol
+                      )}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setIsReconfigureOpen(true)}
+                      className="flex h-7 items-center gap-1 rounded-md border border-white/8 bg-white/[0.03] px-2 text-[0.68rem] text-white/48 transition hover:bg-white/[0.06] hover:text-white/78 md:h-7.5 md:px-2.5 md:text-[0.7rem]"
+                    >
+                      <SlidersHorizontal className="h-3 w-3" />
+                      <span className="hidden sm:inline">Settings</span>
+                    </button>
+                  </div>
+                </header>
+
+                <div className="flex-1 overflow-y-auto overscroll-contain">
+                  <div className="mx-auto w-full max-w-3xl px-3 py-4 md:px-6 md:py-6">
+                    <div className="space-y-4 md:space-y-5">
                       {messages.map((message) =>
                         message.role === "user" ? (
                           <UserMessage key={message.id} content={message.content} />
@@ -1259,39 +1240,38 @@ function AgentPageContent() {
                           />
                         )
                       )}
-
-                      <div ref={messagesEndRef} className="h-1 w-full" />
-                    </div>
-                  </div>
-
-                  <div className="sticky bottom-0 left-0 right-0 z-20 border-t border-white/8 bg-[#07090d]/95 px-1 pt-2 backdrop-blur-xl md:px-2">
-                    <div className="mx-auto max-w-[760px] pb-[calc(env(safe-area-inset-bottom)+16px)] md:max-w-[740px] md:pb-[calc(env(safe-area-inset-bottom)+12px)]">
-                      <Composer
-                        query={query}
-                        onChangeQuery={setQuery}
-                        onKeyDown={handleComposerKeyDown}
-                        onSubmit={handleSubmit}
-                        isLoading={isLoading}
-                        onOpenFilePicker={openFilePicker}
-                        pendingAttachments={pendingAttachments}
-                        onRemoveAttachment={removeAttachment}
-                      />
-
-                      {(isBalanceFetching || isSwitchingChain || pendingWalletExecution) && (
-                        <div className="mt-2 px-2 text-[0.82rem] text-white/44">
-                          {pendingWalletExecution
-                            ? "Waiting for connected-wallet transaction receipt..."
-                            : isSwitchingChain
-                              ? "Waiting for wallet network switch..."
-                              : "Refreshing connected-wallet balance..."}
-                        </div>
-                      )}
+                      <div ref={messagesEndRef} className="h-3" />
                     </div>
                   </div>
                 </div>
-              )}
-            </div>
-          </div>
+
+                <div className="shrink-0 border-t border-white/8 bg-[#07090d]/70 px-3 py-2 backdrop-blur-md md:px-6 md:py-2.5">
+                  <div className="mx-auto w-full max-w-3xl">
+                    <Composer
+                      query={query}
+                      onChangeQuery={setQuery}
+                      onKeyDown={handleComposerKeyDown}
+                      onSubmit={handleSubmit}
+                      isLoading={isLoading}
+                      onOpenFilePicker={openFilePicker}
+                      pendingAttachments={pendingAttachments}
+                      onRemoveAttachment={removeAttachment}
+                    />
+
+                    {(isBalanceFetching || isSwitchingChain || pendingWalletExecution) && (
+                      <div className="mt-1 text-center text-[0.68rem] text-white/28">
+                        {pendingWalletExecution
+                          ? "Confirming transaction..."
+                          : isSwitchingChain
+                            ? "Switching network..."
+                            : "Updating balance..."}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </>
+            )}
+          </main>
         </div>
       </section>
     </div>
@@ -1300,15 +1280,13 @@ function AgentPageContent() {
 
 function AgentPageFallback() {
   return (
-    <div className="page-grid relative h-[100svh] overflow-hidden md:h-[100dvh]">
+    <div className="page-grid relative h-[100svh] overflow-hidden bg-[#07090d] md:h-[100dvh]">
       <OrbitalBackground />
-      <section className="relative mx-auto h-full max-w-[1440px] px-4 pt-6 md:px-8 md:pt-8">
-        <div className="flex h-full items-center justify-center">
-          <div className="glass-panel rounded-[28px] px-6 py-5 text-sm text-white/68">
-            Loading agent…
-          </div>
+      <div className="flex h-full w-full items-center justify-center">
+        <div className="rounded-xl border border-white/10 bg-white/[0.04] px-5 py-3 text-[0.85rem] text-white/60">
+          Loading agent…
         </div>
-      </section>
+      </div>
     </div>
   );
 }
