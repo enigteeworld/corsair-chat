@@ -11,9 +11,39 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Corsair Chat",
+  title: "Corsair",
   description:
-    "Creative and productivity assistant in the Corsair ecosystem.",
+    "Autonomous financial agent with managed strategy infrastructure, wallet actions, and CARV-1 runtime access.",
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
+  openGraph: {
+    title: "Corsair",
+    description:
+      "Autonomous financial agent with managed strategy infrastructure, wallet actions, and CARV-1 runtime access.",
+    url: "https://corsair-chat.vercel.app",
+    siteName: "Corsair",
+    images: [
+      {
+        url: "/opengraph-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Corsair preview image",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Corsair",
+    description:
+      "Autonomous financial agent with managed strategy infrastructure, wallet actions, and CARV-1 runtime access.",
+    images: ["/opengraph-image.png"],
+  },
+  metadataBase: new URL("https://corsair-chat.vercel.app"),
 };
 
 export default function RootLayout({
