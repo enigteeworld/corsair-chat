@@ -1,30 +1,9 @@
-
-type ApiMessage = {
-  role: "user" | "assistant";
-  content: string;
-};
-
-type WalletContext = {
-  connected?: boolean;
-  address?: string;
-  chainId?: number;
-  chainName?: string;
-};
-
-type BackendIntentResult =
-  | {
-      handled: false;
-    }
-  | {
-      handled: true;
-      reply: string;
-    };
-
-type ParsedSendIntent = {
-  amount: string;
-  asset: "ETH";
-  to: `0x${string}`;
-};
+import type {
+  ApiMessage,
+  BackendIntentResult,
+  ParsedSendIntent,
+  WalletContext,
+} from "./types";
 
 const ARBITRUM_SEPOLIA_CHAIN_ID = 421614;
 const ARBITRUM_SEPOLIA_CHAIN_NAME = "Arbitrum Sepolia";
@@ -187,7 +166,9 @@ function isCancelMessage(input: string) {
   );
 }
 
-function findPendingTreasurySendIntent(messages: ApiMessage[]): ParsedSendIntent | null {
+function findPendingTreasurySendIntent(
+  messages: ApiMessage[]
+): ParsedSendIntent | null {
   if (messages.length < 3) {
     return null;
   }
@@ -201,7 +182,10 @@ function findPendingTreasurySendIntent(messages: ApiMessage[]): ParsedSendIntent
 
   for (let i = currentUserIndex - 1; i >= 0; i -= 1) {
     const message = messages[i];
-    if (message.role === "assistant" && isTreasuryConfirmationPrompt(message.content)) {
+    if (
+      message.role === "assistant" &&
+      isTreasuryConfirmationPrompt(message.content)
+    ) {
       confirmationAssistantIndex = i;
       break;
     }

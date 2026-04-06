@@ -44,6 +44,7 @@ const SYMBOL_OPTIONS = ["😏", "⚡", "🧠", "✦"];
 const ARBITRUM_SEPOLIA_CHAIN_ID = 421614;
 const ARBITRUM_SEPOLIA_CHAIN_NAME = "Arbitrum Sepolia";
 const MOBILE_TOP_OFFSET = 78;
+const DESKTOP_TOPBAR_OFFSET = 72;
 
 type ParsedWalletSend = {
   amount: string;
@@ -1030,39 +1031,37 @@ function AgentPageContent() {
         </div>
       )}
 
-      <section className="relative mx-auto h-full min-h-0 max-w-[1440px] px-4 pt-4 pb-[calc(env(safe-area-inset-bottom)+88px)] md:px-8 md:pt-6 md:pb-[max(12px,env(safe-area-inset-bottom))]">
+      <section className="relative mx-auto h-full min-h-0 max-w-[1440px] px-4 pt-4 pb-[calc(env(safe-area-inset-bottom)+88px)] md:px-8 md:pt-6 md:pb-[max(12px,env(safe-area-inset-bottom))] xl:h-[calc(100dvh-72px)] xl:overflow-hidden xl:px-8 xl:pt-4 xl:pb-3">
         <div className="grid h-full min-h-0 gap-6 xl:grid-cols-[240px_minmax(0,1fr)] xl:gap-8">
           {/* Desktop Sidebar */}
-          <aside className="hidden xl:block">
-            <div className="pt-5">
-              <div className="h-[calc(100dvh-128px)] rounded-[24px] border border-white/8 bg-white/[0.025] backdrop-blur-md">
-                <div className="flex h-full flex-col p-3">
-                  <div className="mb-3">
-                    <div className="text-[1.25rem] font-semibold tracking-tight text-white/90">
-                      Chats
-                    </div>
-                    <div className="mt-0.5 text-[0.8rem] text-white/40">
-                      Corsair conversation history
-                    </div>
+          <aside className="hidden min-h-0 overflow-hidden xl:block">
+            <div className="h-full min-h-0 overflow-hidden rounded-[24px] border border-white/8 bg-white/[0.025] backdrop-blur-md">
+              <div className="flex h-full min-h-0 flex-col overflow-hidden p-3">
+                <div className="mb-3 shrink-0">
+                  <div className="text-[1.25rem] font-semibold tracking-tight text-white/90">
+                    Chats
                   </div>
-
-                  <button
-                    type="button"
-                    onClick={handleNewChat}
-                    className="mb-3 flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-white text-[0.85rem] font-medium text-black transition hover:bg-white/90"
-                  >
-                    <Plus className="h-4 w-4" />
-                    New Chat
-                  </button>
-
-                  <div className="min-h-0 flex-1 overflow-y-auto">
-                    <SessionList
-                      sessions={sessions}
-                      activeSessionId={activeSessionId}
-                      onSelectSession={handleSelectSession}
-                      onDeleteSession={handleDeleteSession}
-                    />
+                  <div className="mt-0.5 text-[0.8rem] text-white/40">
+                    Corsair conversation history
                   </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleNewChat}
+                  className="mb-3 flex h-10 w-full shrink-0 items-center justify-center gap-2 rounded-xl bg-white text-[0.85rem] font-medium text-black transition hover:bg-white/90"
+                >
+                  <Plus className="h-4 w-4" />
+                  New Chat
+                </button>
+
+                <div className="min-h-0 flex-1 overflow-y-auto pr-1 xl:overscroll-contain">
+                  <SessionList
+                    sessions={sessions}
+                    activeSessionId={activeSessionId}
+                    onSelectSession={handleSelectSession}
+                    onDeleteSession={handleDeleteSession}
+                  />
                 </div>
               </div>
             </div>
@@ -1221,7 +1220,7 @@ function AgentPageContent() {
                   </div>
                 </header>
 
-                <div className="flex-1 overflow-y-auto overscroll-contain">
+                <div className="flex-1 overflow-y-auto overscroll-contain xl:min-h-0">
                   <div className="mx-auto w-full max-w-3xl px-3 py-4 md:px-6 md:py-6">
                     <div className="space-y-4 md:space-y-5">
                       {messages.map((message) =>

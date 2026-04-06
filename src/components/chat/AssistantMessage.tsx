@@ -348,14 +348,14 @@ export function AssistantMessage({
   const blocks = parseAssistantBlocks(content);
 
   return (
-    <div className="flex justify-start gap-3">
+    <div className="flex justify-start gap-3 min-w-0 w-full">
       <div className="mt-1 hidden h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/[0.04] text-[0.72rem] font-semibold text-white/78 md:flex">
         C
       </div>
 
-      <div className="w-full max-w-[94%] md:max-w-[78%]">
-        <div className="rounded-[24px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06)_0%,rgba(255,255,255,0.03)_100%)] px-4 py-4 text-white/84 shadow-[0_18px_44px_rgba(0,0,0,0.18),inset_0_1px_0_rgba(255,255,255,0.03)] md:rounded-[28px] md:px-6 md:py-5">
-          <div className="max-w-[640px] space-y-4 md:space-y-5">
+      <div className="w-full max-w-[94%] sm:max-w-[90%] md:max-w-[88%] lg:max-w-[85%] min-w-0">
+        <div className="rounded-[24px] border border-white/10 bg-[linear-gradient(180deg,rgba(255,255,255,0.06)_0%,rgba(255,255,255,0.03)_100%)] px-4 py-4 text-white/84 shadow-[0_18px_44px_rgba(0,0,0,0.18),inset_0_1px_0_rgba(255,255,255,0.03)] md:rounded-[28px] md:px-6 md:py-5 min-w-0">
+          <div className="w-full min-w-0 space-y-4 md:space-y-5">
             {blocks.map((block, index) => {
               if (block.type === "heading") {
                 const headingClass =
@@ -368,7 +368,7 @@ export function AssistantMessage({
                         : "text-[0.96rem] font-semibold tracking-[-0.02em] text-white/88 md:text-[1rem]";
 
                 return (
-                  <h3 key={index} className={headingClass}>
+                  <h3 key={index} className={`${headingClass} min-w-0 break-words overflow-hidden`}>
                     {renderInlineRichText(block.text)}
                   </h3>
                 );
@@ -378,11 +378,13 @@ export function AssistantMessage({
                 return (
                   <ul
                     key={index}
-                    className="space-y-2.5 pl-5 text-[0.98rem] leading-[1.7] text-white/82 marker:text-white/42 md:text-[1rem] md:leading-8"
+                    className="min-w-0 space-y-2.5 pl-5 text-[0.98rem] leading-[1.7] text-white/82 marker:text-white/42 md:text-[1rem] md:leading-8"
                     style={{ listStyleType: "disc" }}
                   >
                     {block.items.map((item, itemIndex) => (
-                      <li key={itemIndex}>{renderInlineRichText(item)}</li>
+                      <li key={itemIndex} className="min-w-0 break-words overflow-hidden">
+                        {renderInlineRichText(item)}
+                      </li>
                     ))}
                   </ul>
                 );
@@ -392,11 +394,13 @@ export function AssistantMessage({
                 return (
                   <ol
                     key={index}
-                    className="space-y-2.5 pl-5 text-[0.98rem] leading-[1.7] text-white/82 marker:text-white/42 md:text-[1rem] md:leading-8"
+                    className="min-w-0 space-y-2.5 pl-5 text-[0.98rem] leading-[1.7] text-white/82 marker:text-white/42 md:text-[1rem] md:leading-8"
                     style={{ listStyleType: "decimal" }}
                   >
                     {block.items.map((item, itemIndex) => (
-                      <li key={itemIndex}>{renderInlineRichText(item)}</li>
+                      <li key={itemIndex} className="min-w-0 break-words overflow-hidden">
+                        {renderInlineRichText(item)}
+                      </li>
                     ))}
                   </ol>
                 );
@@ -406,9 +410,11 @@ export function AssistantMessage({
                 return (
                   <blockquote
                     key={index}
-                    className="rounded-r-[16px] border-l-2 border-cyan-300/20 bg-white/[0.02] pl-4 pr-2 text-[0.95rem] italic leading-7 text-white/68 md:text-[0.98rem] md:leading-8"
+                    className="min-w-0 rounded-r-[16px] border-l-2 border-cyan-300/20 bg-white/[0.02] pl-4 pr-2 text-[0.95rem] italic leading-7 text-white/68 md:text-[0.98rem] md:leading-8"
                   >
-                    {renderInlineRichText(block.text)}
+                    <div className="min-w-0 break-words overflow-hidden">
+                      {renderInlineRichText(block.text)}
+                    </div>
                   </blockquote>
                 );
               }
@@ -470,7 +476,7 @@ export function AssistantMessage({
               return (
                 <p
                   key={index}
-                  className="whitespace-pre-wrap break-words text-[0.98rem] leading-[1.7] text-white/82 md:text-[1rem] md:leading-[1.95]"
+                  className="min-w-0 whitespace-pre-wrap break-words overflow-hidden text-[0.98rem] leading-[1.7] text-white/82 md:text-[1rem] md:leading-[1.95]"
                 >
                   {renderInlineRichText(block.text)}
                 </p>
