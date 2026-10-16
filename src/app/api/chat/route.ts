@@ -1,6 +1,17 @@
 import { maybeHandleCarvIntent } from "./carv";
+import { maybeHandleCvIntent } from "./cv";
+import { maybeHandleEmailIntent } from "./email";
+import { maybeHandleIdeaPartnerIntent } from "./ideaPartner";
 import { streamFromOpenRouter, hasOpenRouterConfig } from "./openrouter";
-import type { ApiMessage, ApiPersonalityConfig, WalletContext } from "./types";
+import { maybeHandlePostGeneratorIntent } from "./postGenerator";
+import { maybeHandleResearchIntent } from "./research";
+import { maybeHandleRewriteStudioIntent } from "./rewriteStudio";
+import type {
+  ApiMessage,
+  ApiPersonalityConfig,
+  BackendIntentResult,
+  WalletContext,
+} from "./types";
 import { maybeHandleWalletIntent } from "./wallet";
 
 function buildSystemPrompt(
@@ -75,6 +86,26 @@ Current configured personality:
 
 ${walletSection}
 `.trim();
+}
+
+// Wraps a v1.0 feature handler's task-specific prompt (CV, research, email,
+// post generator, rewrite studio, idea partner) around the same identity /
+// tone / style / wallet-separation base every other Corsair reply uses, so
+// feature output still sounds like Corsair and not a disconnected bot.
+function buildFeatureSystemPrompt(
+  featurePrompt: string,
+  personality?: ApiPersonalityConfig,
+  wallet?: WalletContext
+) {
+  const basePrompt = buildSystemPrompt(personality, wallet);
+
+  return `${basePrompt}
+
+---
+
+Active feature mode for this reply. Follow this task-specific brief in addition to everything above; where the two overlap, this brief wins on format:
+
+${featurePrompt}`;
 }
 
 function normalizePersonality(personality: unknown): ApiPersonalityConfig | undefined {
@@ -197,7 +228,7 @@ export async function POST(req: Request) {
       normalizedWallet
     );
 
-    if (walletIntent.handled) {
+    if (walletIntent.handled && typeof walletIntent.reply === "string") {
       return streamTextResponse(walletIntent.reply);
     }
 
@@ -206,11 +237,70 @@ export async function POST(req: Request) {
       normalizedWallet
     );
 
-    if (carvIntent.handled) {
+    if (carvIntent.handled && typeof carvIntent.reply === "string") {
       return streamTextResponse(carvIntent.reply);
     }
 
     const openRouterConfig = hasOpenRouterConfig();
+
+    // The six v1.0 productivity features. Each is an internal handler with
+    // its own intent parser, prompt template, and output shape — same
+    // pattern as wallet.ts / carv.ts above, just next in the chain. Unlike
+    // wallet/carv (which return a fully-formed reply), these hand back a
+    // "generate" system prompt because the actual content has to come from
+    // the model. Order reflects how narrow/unambiguous each trigger is.
+    const featureHandlers: Array<
+      (messages: ApiMessage[]) => Promise<BackendIntentResult>
+    > = [
+      maybeHandleCvIntent,
+      maybeHandleResearchIntent,
+      maybeHandleEmailIntent,
+      maybeHandlePostGeneratorIntent,
+      maybeHandleRewriteStudioIntent,
+      maybeHandleIdeaPartnerIntent,
+    ];
+
+    let featureIntent: BackendIntentResult = { handled: false };
+
+    for (const handler of featureHandlers) {
+      featureIntent = await handler(normalizedMessages);
+      if (featureIntent.handled) {
+        break;
+      }
+    }
+
+    if (featureIntent.handled && featureIntent.generate) {
+      if (!openRouterConfig.hasApiKey) {
+        return Response.json(
+          {
+            error:
+              "Missing OPENROUTER_API_KEY. Add it to .env.local before using Corsair chat.",
+          },
+          { status: 500 }
+        );
+      }
+
+      if (!openRouterConfig.hasModels) {
+        return Response.json(
+          {
+            error:
+              "No OpenRouter models configured. Add OPENROUTER_MODELS to .env.local.",
+          },
+          { status: 500 }
+        );
+      }
+
+      const featureSystemPrompt = buildFeatureSystemPrompt(
+        featureIntent.generate.systemPrompt,
+        normalizePersonality(personality),
+        normalizedWallet
+      );
+
+      return await streamFromOpenRouter(
+        normalizedMessages,
+        featureSystemPrompt
+      );
+    }
 
     if (!openRouterConfig.hasApiKey) {
       return Response.json(
